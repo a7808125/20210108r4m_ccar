@@ -1,0 +1,22 @@
+{
+    "name": "20210108R4M_Ccar",
+    "description": "",
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "sensors": "github:gigotoys/gigo-block#42e48e853c87813ab0148b44b47b6279d797ba5e",
+        "microphone": "*"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "preferredEditor": "blocksprj"
+}
