@@ -3,13 +3,13 @@ function right () {
     AnalogPin.P13,
     0,
     AnalogPin.P14,
-    120
+    220
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    0,
+    1,
     AnalogPin.P16,
-    120
+    220
     )
 }
 function back (speed: number) {
@@ -21,9 +21,9 @@ function back (speed: number) {
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    0,
+    1,
     AnalogPin.P16,
-    speed * 1.1
+    speed * 0.85
     )
 }
 function left () {
@@ -31,13 +31,13 @@ function left () {
     AnalogPin.P13,
     1,
     AnalogPin.P14,
-    120
+    220
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    1,
+    0,
     AnalogPin.P16,
-    120
+    220
     )
 }
 function stop () {
@@ -49,7 +49,7 @@ function stop () {
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    1,
+    0,
     AnalogPin.P16,
     0
     )
@@ -59,13 +59,13 @@ function left3 () {
     AnalogPin.P13,
     1,
     AnalogPin.P14,
-    130
+    230
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    1,
+    0,
     AnalogPin.P16,
-    130
+    230
     )
 }
 function left2 () {
@@ -73,13 +73,13 @@ function left2 () {
     AnalogPin.P13,
     1,
     AnalogPin.P14,
-    95
+    130
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    1,
+    0,
     AnalogPin.P16,
-    95
+    13
     )
 }
 function right3 () {
@@ -87,13 +87,13 @@ function right3 () {
     AnalogPin.P13,
     0,
     AnalogPin.P14,
-    130
+    230
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    0,
+    1,
     AnalogPin.P16,
-    130
+    230
     )
 }
 function right2 () {
@@ -101,13 +101,13 @@ function right2 () {
     AnalogPin.P13,
     0,
     AnalogPin.P14,
-    95
+    200
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    0,
+    1,
     AnalogPin.P16,
-    95
+    200
     )
 }
 function go (speed: number) {
@@ -119,9 +119,9 @@ function go (speed: number) {
     )
     sensors.DDMmotor(
     AnalogPin.P15,
-    1,
+    0,
     AnalogPin.P16,
-    speed * 1
+    speed * 0.85
     )
 }
 // 初始設定
@@ -151,24 +151,31 @@ basic.forever(function () {
         }
         // 第一段:安壓開關後原地右轉，直到右邊循線感應遇到黑線停止。
         if (tag == 1) {
+            go(200)
+            basic.pause(1000)
+            // 停止後進第二段
+            tag = 2
+        }
+        // 第一段:安壓開關後原地右轉，直到右邊循線感應遇到黑線停止。
+        if (tag == 2) {
             if (pins.digitalReadPin(DigitalPin.P8) == 0) {
                 right2()
             } else {
                 stop()
                 // 停止後進第二段
-                tag = 2
+                tag = 3
                 // 時間從新計時
                 t = 0
             }
         }
         // 第二段:將循線一時間分為過彎前和過彎後兩段速度變化
-        if (tag == 2) {
+        if (tag == 3) {
             if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
                 // 時間變數t可調整至適當時間
                 if (t <= 10) {
-                    go(120)
+                    go(250)
                 } else {
-                    go(100)
+                    go(220)
                 }
             } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
                 if (t <= 10) {
@@ -186,88 +193,39 @@ basic.forever(function () {
                 }
             } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 1) {
                 stop()
-                basic.pause(100)
+                basic.pause(500)
+                go(200)
+                basic.pause(500)
                 left2()
                 basic.pause(100)
-                go(100)
+                go(200)
                 basic.pause(1000)
-                tag = 3
-            }
-        }
-        if (tag == 3) {
-            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                go(100)
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                right2()
-                basic.pause(100)
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
-                left2()
-                basic.pause(100)
-            } else {
-                stop()
                 tag = 4
             }
         }
         if (tag == 4) {
-            go(100)
+            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                go(220)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                right2()
+                basic.pause(100)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
+                left2()
+                basic.pause(100)
+            } else {
+                stop()
+                tag = 5
+            }
+        }
+        if (tag == 5) {
+            go(200)
             basic.pause(400)
             stop()
             basic.pause(1000)
-            back(110)
-            basic.pause(2000)
+            back(210)
+            basic.pause(4500)
             stop()
-            tag = 5
-        }
-        if (tag == 5) {
-            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                go(100)
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                right2()
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
-                left2()
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 1) {
-                stop()
-                basic.pause(500)
-                go(100)
-                basic.pause(1000)
-                tag = 6
-            }
-        }
-        if (tag == 6) {
-            left()
-            basic.pause(1000)
-            tag = 7
-        }
-        if (tag == 7) {
-            if (pins.digitalReadPin(DigitalPin.P1) == 1) {
-                right()
-                basic.pause(200)
-                stop()
-                tag = 8
-            } else {
-                left()
-            }
-        }
-        if (tag == 8) {
-            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                go(100)
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                right()
-            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
-                left()
-            } else {
-                stop()
-                basic.pause(1000)
-                left()
-                basic.pause(500)
-                go(110)
-                basic.pause(2000)
-                stop()
-                tag = 9
-            }
-        }
-        if (tag == 9) {
-            stop()
+            tag = 6
         }
     } else {
         stop()
