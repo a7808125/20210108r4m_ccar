@@ -73,13 +73,13 @@ function left2 () {
     AnalogPin.P13,
     1,
     AnalogPin.P14,
-    130
+    200
     )
     sensors.DDMmotor(
     AnalogPin.P15,
     0,
     AnalogPin.P16,
-    13
+    200
     )
 }
 function right3 () {
@@ -145,7 +145,7 @@ basic.forever(function () {
         // 第0段為車子準備出發段
         if (tag == 0) {
             stop()
-            basic.pause(500)
+            basic.pause(1000)
             // 將變數改為1進入路線第一段
             tag = 1
         }
@@ -194,10 +194,8 @@ basic.forever(function () {
             } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 1) {
                 stop()
                 basic.pause(500)
-                go(200)
-                basic.pause(500)
                 left2()
-                basic.pause(100)
+                basic.pause(200)
                 go(200)
                 basic.pause(1000)
                 tag = 4
@@ -205,7 +203,7 @@ basic.forever(function () {
         }
         if (tag == 4) {
             if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
-                go(220)
+                go(200)
             } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
                 right2()
                 basic.pause(100)
@@ -219,13 +217,66 @@ basic.forever(function () {
         }
         if (tag == 5) {
             go(200)
-            basic.pause(400)
+            basic.pause(500)
             stop()
             basic.pause(1000)
             back(210)
             basic.pause(4500)
             stop()
             tag = 6
+        }
+        if (tag == 6) {
+            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                go(200)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                right2()
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
+                left2()
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 1) {
+                stop()
+                basic.pause(500)
+                go(200)
+                basic.pause(1000)
+                tag = 7
+            }
+        }
+        if (tag == 7) {
+            left()
+            basic.pause(1000)
+            stop()
+            tag = 8
+        }
+        if (tag == 8) {
+            if (pins.digitalReadPin(DigitalPin.P1) == 1) {
+                right()
+                basic.pause(200)
+                stop()
+                tag = 9
+            } else {
+                left()
+            }
+        }
+        if (tag == 9) {
+            if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                go(200)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
+                right()
+                basic.pause(100)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 1) {
+                left()
+            } else {
+                stop()
+                basic.pause(1000)
+                left()
+                basic.pause(200)
+                go(250)
+                basic.pause(3500)
+                stop()
+                tag = 10
+            }
+        }
+        if (tag == 10) {
+            stop()
         }
     } else {
         stop()
@@ -248,7 +299,7 @@ basic.forever(function () {
         // 將按鈕狀態變數改變(初始為-1乘以-1，改變為1，若再次按下又變為-1)
         button = button * -1
     }
-    basic.pause(400)
+    basic.pause(500)
 })
 basic.forever(function () {
     // 不斷在Microbit板子上顯示tag狀態，用以顯示程式現在跑到哪一段，與實際車子在場地上跑的分段是否相同，也可藉此了解實際跑後需要修改的程式段落)
