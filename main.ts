@@ -173,9 +173,9 @@ basic.forever(function () {
             if (pins.digitalReadPin(DigitalPin.P1) == 0 && pins.digitalReadPin(DigitalPin.P8) == 0) {
                 // 時間變數t可調整至適當時間
                 if (t <= 10) {
-                    go(250)
+                    go(230)
                 } else {
-                    go(220)
+                    go(200)
                 }
             } else if (pins.digitalReadPin(DigitalPin.P1) == 1 && pins.digitalReadPin(DigitalPin.P8) == 0) {
                 if (t <= 10) {
@@ -195,7 +195,7 @@ basic.forever(function () {
                 stop()
                 basic.pause(500)
                 left2()
-                basic.pause(200)
+                basic.pause(100)
                 go(200)
                 basic.pause(1000)
                 tag = 4
@@ -220,7 +220,7 @@ basic.forever(function () {
             basic.pause(500)
             stop()
             basic.pause(1000)
-            back(210)
+            back(220)
             basic.pause(4500)
             stop()
             tag = 6
@@ -268,15 +268,12 @@ basic.forever(function () {
                 stop()
                 basic.pause(1000)
                 left()
-                basic.pause(200)
+                basic.pause(300)
                 go(250)
                 basic.pause(3500)
                 stop()
                 tag = 10
             }
-        }
-        if (tag == 10) {
-            stop()
         }
     } else {
         stop()
